@@ -1,4 +1,13 @@
-Ext.define('CustomApp', {
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DRI Chart</title>
+
+    <script type="text/javascript" src="/apps/2.0/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                Ext.define('CustomApp', {
     extend: 'Rally.app.App',
     componentCls: 'app',
     weeks : [],
@@ -498,3 +507,33 @@ Ext.define('CustomApp', {
         });
     }
 });
+
+            Rally.launchApp('CustomApp', {
+                name:"DRI Chart",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+
+    <style type="text/css">
+        .app .rally-grid .x-grid-data-row:nth-child(-n+12) .x-grid-cell:last-child {
+  color: #808080;
+}
+.app .rally-grid .x-grid-data-row:nth-child(n+13) .x-grid-cell:last-child .x-grid-cell-inner {
+  font-family: NotoSansBold,Helvetica,Arial;
+}
+.app .rally-grid .x-grid-data-row:nth-child(-n+4) .x-grid-cell:nth-child(7) {
+  color: #808080;
+}
+.app .rally-grid .x-grid-data-row:nth-child(n+5) .x-grid-cell:nth-child(7) .x-grid-cell-inner {
+  font-family: NotoSansBold,Helvetica,Arial;
+}
+
+    </style>
+</head>
+<body>
+</body>
+</html>
