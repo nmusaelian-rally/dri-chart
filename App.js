@@ -11,42 +11,37 @@ Ext.define('CustomApp', {
     ttr2  : 84,
     allData : [],
     categories : [],
-    //layout: 'hbox',
-    items:[{
-        xtype: 'container',
-        itemId: 'mainContainer',
-        //layout: {
-        //    type: 'hbox',
-        //    align: 'middle',
-        //    pack: 'center'
-        //},
-        items:[
-        {
-            xtype: 'container',
-            itemId: 'gridContainer',
-            //width: 600
-        },
-        {
-            xtype: 'container',
-            itemId:'chartContainer'
-            //width: 600
-        }]
-        
-    }],
     launch: function() {
-        //var panel = Ext.create('Ext.panel.Panel', {
-        //    layout: {
-        //        type: 'hbox',
-        //        align: 'left'
-        //    },
-        //    itemId: 'panel'
-        //});
-        //this.add(panel);
         this._myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait.This may take long..."});
         this._myMask.show();
         this.getDates();
         this.createFilters();
         this.makeStore();
+        var gridPanel = Ext.create('Ext.Panel', {
+            //title: 'Grid Panel',
+            itemId:'gridPanel',
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [{
+                xtype: 'panel',
+                title: '4 week and 12 week DRI',
+                itemId:'childPanel1',
+                flex: 1
+            },{
+                xtype: 'panel',
+                title: 'Defects',
+                itemId:'childPanel2',
+                flex: 1
+            }]
+        });
+        var chartPanel = Ext.create('Ext.Panel', {
+            title: 'DRI Chart',
+            itemId: 'chartPanel'
+        });
+        this.add(gridPanel);
+        this.add(chartPanel);
     },
     getDates:function(){
         var now = new Date(),
@@ -202,16 +197,6 @@ Ext.define('CustomApp', {
         return closedDefectsWithinAllTTRs;
     },
     makeCustomStore:function(){
-        /*
-         * combinedArray is array of arrays of values in each column.
-         * it is array of columns
-         *
-         * zippedChunks turns array of arrays of column values into
-         * array of arrays of row values
-         *
-         * arrayOfObjects turns each element of zippedChunks (each array within zippedChunks array)
-         * into an object where key is index of sub-array's elemement
-         */
         //console.log('created',this.created);
         //console.log('fixedWithinTTR',this.fixedWithinTTR);
         this.fixedWithinTTR = _.flatten(this.fixedWithinTTR);
@@ -284,7 +269,7 @@ Ext.define('CustomApp', {
     },
     makeGrid:function(data){
         this._myMask.hide();
-        this.down('#gridContainer').add({
+        this.down('#childPanel1').add({
             xtype: 'rallygrid',
             itemId: 'defectGrid',
             store: Ext.create('Rally.data.custom.Store', {
@@ -395,7 +380,7 @@ Ext.define('CustomApp', {
         //_.each(this.series,function(series){
         //    console.log(series);
         //});
-        this.down('#chartContainer').add({
+        this.down('#chartPanel').add({
             xtype: 'rallychart',
             chartConfig: {
                 chart:{
@@ -438,5 +423,4 @@ Ext.define('CustomApp', {
           
         });
     }
-    
 });
