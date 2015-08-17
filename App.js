@@ -392,11 +392,11 @@ Ext.define('CustomApp', {
                 {
                     text: 'ClosedDate',
                     dataIndex: 'ClosedDate'
-                },
+                }/*,
                 {
                     text: 'Resolution',
                     dataIndex: 'Resolution'
-                }
+                }*/
             ],
             showPagingToolbar:true,
             cls: ''
