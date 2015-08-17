@@ -36,7 +36,7 @@ Ext.define('CustomApp', {
                 flex: 1
             },{
                 xtype: 'panel',
-                title: 'Defects',
+                title: 'Last Week or Selected Week Defects',
                 itemId:'childPanel2',
                 flex: 2
             }]
@@ -146,7 +146,7 @@ Ext.define('CustomApp', {
             this.arrOfFixedAndLimitedByCreationDateFilters); //turn into one array of 24 filters
         this.defectStore = Ext.create('Rally.data.wsapi.Store',{
             model: 'Defect',
-            fetch: ['Name','State','FormattedID','CreationDate','ClosedDate','Owner','Project'],
+            fetch: ['Name','State','Resolution','FormattedID','CreationDate','ClosedDate','Owner','Project'],
             limit: Infinity
         });
         this.applyFiltersToStore(0);
@@ -169,6 +169,7 @@ Ext.define('CustomApp', {
                             'FormattedID':record.get('FormattedID'),
                             'Name':record.get('Name'),
                             'State': record.get('State'),
+                            'Resolution': record.get('Resolution'),
                             'Owner': (owner && owner._refObjectName) || 'None',
                             'Project':record.get('Project')._refObjectName,
                             'CreationDate': Rally.util.DateTime.format(record.get('CreationDate'), 'Y-m-d'),
@@ -297,7 +298,7 @@ Ext.define('CustomApp', {
             }),
             listeners: {
                 select: this.getDetails,
-                 load : function(selModel, record, index, options){
+                load : function(selModel, record, index, options){
                     this.getDetails(selModel, record, 0, options);
                 },
                 scope: this
@@ -337,7 +338,20 @@ Ext.define('CustomApp', {
         this.prepareChart();
     },
     getDetails:function(selModel, record, rowIndex, options){
-        console.log('defectDetails[', rowIndex, ']', this.defectDetails[rowIndex]);
+        //console.log('defectDetails[', rowIndex, ']', this.defectDetails[rowIndex]);
+        var removeAdminClosedIfClosed = [];
+        _.each(this.defectDetails[rowIndex], function(obj){
+            if (!obj.ClosedDate) {
+                removeAdminClosedIfClosed.push(obj);
+            }
+            else {
+                console.log('closed defect', obj.FormattedID);
+                if ((obj.Resolution === "Code Change")||(obj.Resolution === "Database/Metadata Change")||(obj.Resolution === "Configuration Change")) {
+                    removeAdminClosedIfClosed.push(obj);
+                }
+            }
+        });
+       
         var detailsGrid = this.down('#detailsGrid');
         if (detailsGrid) {
             Ext.ComponentQuery.query('#childPanel2')[0].remove(Ext.ComponentQuery.query('#detailsGrid')[0], true);
@@ -346,7 +360,7 @@ Ext.define('CustomApp', {
             xtype: 'rallygrid',
             itemId: 'detailsGrid',
             store: Ext.create('Rally.data.custom.Store', {
-                data: this.defectDetails[rowIndex]
+                data: removeAdminClosedIfClosed
             }),
             columnCfgs: [
                 {
@@ -378,6 +392,10 @@ Ext.define('CustomApp', {
                 {
                     text: 'ClosedDate',
                     dataIndex: 'ClosedDate'
+                },
+                {
+                    text: 'Resolution',
+                    dataIndex: 'Resolution'
                 }
             ],
             showPagingToolbar:true,
