@@ -45,8 +45,9 @@ Ext.define('CustomApp', {
             title: 'DRI Chart',
             itemId: 'chartPanel'
         });
-        this.add(chartPanel);
+        
         this.add(gridPanel);
+        this.add(chartPanel);
         
     },
     getDates:function(){
@@ -147,7 +148,7 @@ Ext.define('CustomApp', {
             this.arrOfFixedAndLimitedByCreationDateFilters); //turn into one array of 24 filters
         this.defectStore = Ext.create('Rally.data.wsapi.Store',{
             model: 'Defect',
-            fetch: ['Name','State','Resolution','FormattedID','CreationDate','ClosedDate','Owner','Project'],
+            fetch: ['Name','State','Resolution','FormattedID','CreationDate','ClosedDate','Owner','Project','Priority'],
             limit: Infinity
         });
         this.applyFiltersToStore(0);
@@ -171,6 +172,7 @@ Ext.define('CustomApp', {
                             'Name':record.get('Name'),
                             'State': record.get('State'),
                             'Resolution': record.get('Resolution'),
+                            'Priority': record.get('Priority'),
                             'Owner': (owner && owner._refObjectName) || 'None',
                             'Project':record.get('Project')._refObjectName,
                             'CreationDate': Rally.util.DateTime.format(record.get('CreationDate'), 'Y-m-d'),
@@ -400,6 +402,10 @@ Ext.define('CustomApp', {
                 {
                     text: 'Resolution',
                     dataIndex: 'Resolution'
+                },
+                {
+                    text: 'Priority',
+                    dataIndex: 'Priority'
                 }
             ],
             showPagingToolbar:true,
