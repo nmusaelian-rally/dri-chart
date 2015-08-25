@@ -45,8 +45,9 @@ Ext.define('CustomApp', {
             title: 'DRI Chart',
             itemId: 'chartPanel'
         });
-        this.add(gridPanel);
         this.add(chartPanel);
+        this.add(gridPanel);
+        
     },
     getDates:function(){
         var now = new Date(),
@@ -339,18 +340,20 @@ Ext.define('CustomApp', {
     },
     getDetails:function(selModel, record, rowIndex, options){
         //console.log('defectDetails[', rowIndex, ']', this.defectDetails[rowIndex]);
-        var removeAdminClosedIfClosed = [];
-        _.each(this.defectDetails[rowIndex], function(obj){
-            if (!obj.ClosedDate) {
-                removeAdminClosedIfClosed.push(obj);
-            }
-            else {
-                console.log('closed defect', obj.FormattedID);
-                if ((obj.Resolution === "Code Change")||(obj.Resolution === "Database/Metadata Change")||(obj.Resolution === "Configuration Change")) {
-                    removeAdminClosedIfClosed.push(obj);
-                }
-            }
-        });
+        
+        //If we want to remove admin-closed defects use this:
+        //var removeAdminClosedIfClosed = [];
+        //_.each(this.defectDetails[rowIndex], function(obj){
+        //    if (!obj.ClosedDate) {
+        //        removeAdminClosedIfClosed.push(obj);
+        //    }
+        //    else {
+        //        console.log('closed defect', obj.FormattedID);
+        //        if ((obj.Resolution === "Code Change")||(obj.Resolution === "Database/Metadata Change")||(obj.Resolution === "Configuration Change")) {
+        //            removeAdminClosedIfClosed.push(obj);
+        //        }
+        //    }
+        //});
        
         var detailsGrid = this.down('#detailsGrid');
         if (detailsGrid) {
@@ -360,7 +363,8 @@ Ext.define('CustomApp', {
             xtype: 'rallygrid',
             itemId: 'detailsGrid',
             store: Ext.create('Rally.data.custom.Store', {
-                data: removeAdminClosedIfClosed
+                //data: removeAdminClosedIfClosed
+                data: this.defectDetails[rowIndex]
             }),
             columnCfgs: [
                 {
@@ -377,10 +381,10 @@ Ext.define('CustomApp', {
                     text: 'State',
                     dataIndex: 'State'
                 },
-                {
-                    text: 'Owner',
-                    dataIndex: 'Owner'
-                },
+                //{
+                //    text: 'Owner',
+                //    dataIndex: 'Owner'
+                //},
                 {
                     text: 'Project',
                     dataIndex: 'Project'
@@ -392,11 +396,11 @@ Ext.define('CustomApp', {
                 {
                     text: 'ClosedDate',
                     dataIndex: 'ClosedDate'
-                }/*,
+                },
                 {
                     text: 'Resolution',
                     dataIndex: 'Resolution'
-                }*/
+                }
             ],
             showPagingToolbar:true,
             cls: ''
