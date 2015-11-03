@@ -155,7 +155,7 @@ Ext.define('CustomApp', {
     },
     
     applyFiltersToStore:function(i){
-        this.defectStore.addFilter(this.concatArraysOfFilters[i]);
+        this.defectStore.addFilter(this.concatArraysOfFilters[i],false);
         this.defectStore.load({
             scope: this,
             callback: function(records, operation) {
